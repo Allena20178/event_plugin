@@ -32,4 +32,4 @@ function create_taxonomies() {
 add_action( 'init', 'create_taxonomies');
 
 
-include(‘inc/widget-events.php’);
+include(‘inc/Event_Widget.php’);
