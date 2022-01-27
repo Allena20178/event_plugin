@@ -31,5 +31,4 @@ function create_taxonomies() {
 }
 add_action( 'init', 'create_taxonomies');
 
-
-include(‘inc/Event_Widget.php’);
+include 'Event_Widget.php';
