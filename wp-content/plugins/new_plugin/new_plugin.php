@@ -31,4 +31,11 @@ function create_taxonomies() {
 }
 add_action( 'init', 'create_taxonomies');
 
-include 'Event_Widget.php';
+function shortcode_event (){
+
+}
+
+add_shortcode('event', 'shortcode_event');
+
+
+include 'inc\Event_Widget.php';
