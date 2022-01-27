@@ -15,15 +15,15 @@ define( 'SCRIPTS', ROOT . '/js/' );
 
 function ewp_custom_post_type() {
 	$labels = array(
-		'name'					=>	__( 'Events', 'ewp' ),
-		'singular_name'			=>	__( 'Event', 'ewp' ),
-		'add_new_item'			=>	__( 'Add New Event', 'ewp' ),
-		'all_items'				=>	__( 'All Events', 'ewp' ),
-		'edit_item'				=>	__( 'Edit Event', 'ewp' ),
-		'new_item'				=>	__( 'New Event', 'ewp' ),
-		'view_item'				=>	__( 'View Event', 'ewp' ),
-		'not_found'				=>	__( 'No Events Found', 'ewp' ),
-		'not_found_in_trash'	=>	__( 'No Events Found in Trash', 'ewp' )
+		'name' =>	__( 'Events', 'ewp' ),
+		'singular_name' =>	__( 'Event', 'ewp' ),
+		'add_new_item' =>	__( 'Add New Event', 'ewp' ),
+		'all_items' =>	__( 'All Events', 'ewp' ),
+		'edit_item' =>	__( 'Edit Event', 'ewp' ),
+		'new_item' =>	__( 'New Event', 'ewp' ),
+		'view_item' =>	__( 'View Event', 'ewp' ),
+		'not_found' =>	__( 'No Events Found', 'ewp' ),
+		'not_found_in_trash' =>	__( 'No Events Found in Trash', 'ewp' )
 	);
 
 	$supports = array(
@@ -33,15 +33,15 @@ function ewp_custom_post_type() {
 	);
 
 	$args = array(
-		'label'			=>	__( 'Events', 'ewp' ),
-		'labels'		=>	$labels,
-		'description'	=>	__( 'A list of upcoming events', 'ewp' ),
-		'public'		=>	true,
-		'show_in_menu'	=>	true,
-		'menu_icon'		=>	IMAGES . 'event.svg',
-		'has_archive'	=>	true,
-		'rewrite'		=>	true,
-		'supports'		=>	$supports
+		'label' =>	__( 'Events', 'ewp' ),
+		'labels' =>	$labels,
+		'description' =>	__( 'A list of events', 'ewp' ),
+		'public' =>	true,
+		'show_in_menu' =>	true,
+		'menu_icon' =>	IMAGES . 'event.svg',
+		'has_archive' =>	true,
+		'rewrite' =>	true,
+		'supports' =>	$supports
 	);
 
 	register_post_type( 'event', $args );
