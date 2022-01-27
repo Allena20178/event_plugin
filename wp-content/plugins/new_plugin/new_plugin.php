@@ -38,4 +38,4 @@ function shortcode_event (){
 add_shortcode('event', 'shortcode_event');
 
 
-include 'inc\Event_Widget.php';
+include 'inc/Event_Widget.php';
