@@ -1,54 +1,124 @@
 <?php
 
+/**
+ * Class Event_Widget
+ */
 class Event_Widget extends WP_Widget {
 
+	
 	public function __construct() {
 		$widget_ops = array(
-			'classname' => 'event_widget',
-			'description' => 'Виджет событий',
+			'class'			=>	'widget_events',
+			'description'	=>	__( 'A widget to display a list of upcoming events', 'ewp' )
 		);
-		parent::__construct( 'event_widget', 'Event Widget', $widget_ops );
+
+		parent::__construct(
+			'widget_events',			//base id
+			__( 'Event Widget', 'ewp' ),	//title
+			$widget_ops
+		);
 	}
 
-	public function widget( $args, $instance ) {
-		$title = apply_filters( 'widget_title', $instance[ 'title' ] );
-		$event_title = get_bloginfo( 'name' );
-		$date = get_bloginfo( 'description' );
 
-		echo $args['before_widget'] . $args['before_title'] . $title . $args['after_title']; ?>
-		<p><strong>Event_Name:</strong> <?php echo $event_title ?></p>
-		<p><strong>Event_Date:</strong> <?php echo $date ?></p>
-		<?php echo $args['after_widget'];
-	}
-
+	
 	public function form( $instance ) {
-		$title = ! empty( $instance['title'] ) ? $instance['title'] : ''; ?>
+		$widget_defaults = array(
+			'title'			=>	'Event Widget',
+			'number_events'	=>	5
+		);
+
+		$instance  = wp_parse_args( (array) $instance, $widget_defaults );
+		?>
+		
+		
 		<p>
-		<label for="<?php echo $this->get_field_id( 'title' ); ?>">Title:</label>
-		<input type="text" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo esc_attr( $title ); ?>" />
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title', 'ewp' ); ?></label>
+			<input type="text" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" class="widefat" value="<?php echo esc_attr( $instance['title'] ); ?>">
 		</p>
 		<p>
-		<label for="<?php echo $this->get_field_id( 'event_date' ); ?>"><?php _e( 'Date of events to show'); ?></label>
-<select id="<?php echo $this->get_field_id( 'event_date' ); ?>" name="<?php echo $this->get_field_name( 'event_date' ); ?>" class="widefat">
-	<?php for ( $i = 1; $i <= 10; $i++ ): ?>
-		<option value="<?php echo $i; ?>" <?php selected( $i, $instance['event_date'], true ); ?>><?php echo $i; ?></option>
-	<?php endfor; ?>
-		</p><?php
+			<label for="<?php echo $this->get_field_id( 'number_events' ); ?>"><?php _e( 'Number of events to show', 'ewp' ); ?></label>
+			<select id="<?php echo $this->get_field_id( 'number_events' ); ?>" name="<?php echo $this->get_field_name( 'number_events' ); ?>" class="widefat">
+				<?php for ( $i = 1; $i <= 10; $i++ ): ?>
+					<option value="<?php echo $i; ?>" <?php selected( $i, $instance['number_events'], true ); ?>><?php echo $i; ?></option>
+				<?php endfor; ?>
+			</select>
+		</p>
+
+		<?php
 	}
 
+
+	
 	public function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
-		$instance[ 'title' ] = strip_tags( $new_instance[ 'title' ] );
-		$instance['date'] = strip_tags($new_instance['date']);
+
+		$instance['title'] = $new_instance['title'];
+		$instance['number_events'] = $new_instance['number_events'];
+
 		return $instance;
+	}
+
+
+	public function widget( $args, $instance ) {
+
+		extract( $args );
+		$title = apply_filters( 'widget_title', $instance['title'] );
+
+		
+		$meta_quer_args = array(
+			'relation'	=>	'AND',
+			array(
+				'key'		=>	'event-end-date',
+				'value'		=>	time(),
+				'compare'	=>	'>='
+			)
+		);
+
+		$query_args = array(
+			'post_type'				=>	'event',
+			'posts_per_page'		=>	$instance['number_events'],
+			'post_status'			=>	'publish',
+			'ignore_sticky_posts'	=>	true,
+			'meta_key'				=>	'event-start-date',
+			'orderby'				=>	'meta_value_num',
+			'order'					=>	'ASC',
+			'meta_query'			=>	$meta_quer_args
+		);
+
+		$upcoming_events = new WP_Query( $query_args );
+
+		
+		echo $before_widget;
+		if ( $title ) {
+			echo $before_title . $title . $after_title;
+		}
+		?>
+		
+		<ul class="ewp_event_entries">
+			<?php while( $upcoming_events->have_posts() ): $widget_events->the_post();
+				$event_start_date = get_post_meta( get_the_ID(), 'event-start-date', true );
+				$event_end_date = get_post_meta( get_the_ID(), 'event-end-date', true );
+				$event_venue = get_post_meta( get_the_ID(), 'event-venue', true ); 
+			?>
+				<li class="ewp_event_entry">
+					<h4><a href="<?php the_permalink(); ?>" class="ewp_event_title"><?php the_title(); ?></a> <span class="event_venue">at <?php echo $event_venue; ?></span></h4>
+					<?php the_excerpt(); ?>
+					<time class="ewp_event_date"><?php echo date( 'F d, Y', $event_start_date ); ?> &ndash; <?php echo date( 'F d, Y', $event_end_date ); ?></time>
+				</li>
+			<?php endwhile; ?>
+		</ul>
+
+		<a href="<?php echo get_post_type_archive_link( 'event' ); ?>">View All Events</a>
+
+		<?php
+		wp_reset_query();
+
+		echo $after_widget;
+
 	}
 }
 
-function event_register_widget() {
+function ewp_register_widget() {
 	register_widget( 'Event_Widget' );
 }
-add_action( 'widgets_init', 'Event_Widget' );
-
-//add_action( 'widgets_init', function(){
-//	register_widget( 'Event_Widget' );
-//});
+add_action( 'widgets_init', 'ewp_register_widget' );
