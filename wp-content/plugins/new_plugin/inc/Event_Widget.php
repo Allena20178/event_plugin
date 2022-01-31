@@ -64,16 +64,6 @@ class Event_Widget extends WP_Widget {
 		extract( $args );
 		$title = apply_filters( 'widget_title', $instance['title'] );
 
-		
-		$meta_quer_args = array(
-			'relation'	=>	'AND',
-			array(
-				'key'		=>	'event-end-date',
-				'value'		=>	time(),
-				'compare'	=>	'>='
-			)
-		);
-
 		$query_args = array(
 			'post_type'				=>	'event',
 			'posts_per_page'		=>	$instance['number_events'],
@@ -98,13 +88,12 @@ class Event_Widget extends WP_Widget {
 			<?php
             while( $widget_events->have_posts() ): $widget_events->the_post();
 				$event_start_date = get_post_meta( get_the_ID(), 'event-start-date', true );
-				$event_end_date = get_post_meta( get_the_ID(), 'event-end-date', true );
 				$event_venue = get_post_meta( get_the_ID(), 'event-venue', true );
 
 			?>
 					<h2><a href="<?php the_permalink(); ?>" class="ewp_event_title"><?php the_title(); ?></a> <span class="event_venue">at <?php echo $event_venue; ?></span></h2>
 					<?php the_excerpt(); ?>
-					<time class="ewp_event_date"><?php echo date( 'F d, Y', $event_start_date ); ?> &ndash; <?php echo date( 'F d, Y', $event_end_date ); ?></time>
+					<time class="ewp_event_date"><?php echo date( 'd-m-Y', $event_start_date ); ?></time>
 			<?php endwhile; ?>
 		</ul>
 <?php
