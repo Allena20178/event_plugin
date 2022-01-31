@@ -148,7 +148,7 @@ function ewp_save_event_info( $post_id ) {
 
 	$is_autosave = wp_is_post_autosave( $post_id );
 	$is_revision = wp_is_post_revision( $post_id );
-	$is_valid_nonce = ( isset( $_POST['ewp-event-info-nonce'] ) && ( wp_verify_nonce( $_POST['ewp-event-info-nonce'], basename( __FILE__ ) ) ) ) ? true : false;
+	$is_valid_nonce = isset( $_POST['ewp-event-info-nonce'] ) && ( wp_verify_nonce( $_POST['ewp-event-info-nonce'], basename( __FILE__ ) ) );
 
 	if ( $is_autosave || $is_revision || ! $is_valid_nonce ) {
 		return;
@@ -200,5 +200,12 @@ function ewp_custom_columns_content( $column_name, $post_id ) {
 }
 add_action( 'manage_event_posts_custom_column', 'ewp_custom_columns_content', 10, 2 );
 
+//add_shortcode('event', 'event_plugin');
+//
+//function event_plugin($atts){
+//    $atts = '';
+//
+//
+//}
 
 include 'inc/Event_Widget.php';

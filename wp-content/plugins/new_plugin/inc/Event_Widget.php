@@ -9,7 +9,7 @@ class Event_Widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'class'			=>	'widget_events',
-			'description'	=>	__( 'A widget to display a list of upcoming events', 'ewp' )
+			'description'	=>	__( 'A widget to display a list of events', 'ewp' )
 		);
 
 		parent::__construct(
@@ -85,7 +85,7 @@ class Event_Widget extends WP_Widget {
 			'meta_query'			=>	$meta_quer_args
 		);
 
-		$upcoming_events = new WP_Query( $query_args );
+		$widget_events = new WP_Query( $query_args );
 
 		
 		echo $before_widget;
@@ -95,22 +95,22 @@ class Event_Widget extends WP_Widget {
 		?>
 		
 		<ul class="ewp_event_entries">
-			<?php while( $upcoming_events->have_posts() ): $widget_events->the_post();
+			<?php
+            while( $widget_events->have_posts() ): $widget_events->the_post();
 				$event_start_date = get_post_meta( get_the_ID(), 'event-start-date', true );
 				$event_end_date = get_post_meta( get_the_ID(), 'event-end-date', true );
-				$event_venue = get_post_meta( get_the_ID(), 'event-venue', true ); 
+				$event_venue = get_post_meta( get_the_ID(), 'event-venue', true );
+
 			?>
-				<li class="ewp_event_entry">
-					<h4><a href="<?php the_permalink(); ?>" class="ewp_event_title"><?php the_title(); ?></a> <span class="event_venue">at <?php echo $event_venue; ?></span></h4>
+					<h2><a href="<?php the_permalink(); ?>" class="ewp_event_title"><?php the_title(); ?></a> <span class="event_venue">at <?php echo $event_venue; ?></span></h2>
 					<?php the_excerpt(); ?>
 					<time class="ewp_event_date"><?php echo date( 'F d, Y', $event_start_date ); ?> &ndash; <?php echo date( 'F d, Y', $event_end_date ); ?></time>
-				</li>
 			<?php endwhile; ?>
 		</ul>
+<?php
+//        if ( have_posts() ) :
 
-		<a href="<?php echo get_post_type_archive_link( 'event' ); ?>">View All Events</a>
 
-		<?php
 		wp_reset_query();
 
 		echo $after_widget;
